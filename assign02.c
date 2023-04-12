@@ -117,7 +117,8 @@ void add_morse_code(int code, int sequence[])
         output[i] = sequence[i];
     }
     output[sequence.length] = code;
-    return output;
+    sequence = output;
+    return;
 }
 
 

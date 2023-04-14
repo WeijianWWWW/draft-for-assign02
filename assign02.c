@@ -67,7 +67,9 @@ void read_morse_code(IDK_THE_TYPE_OF_INPUT){
         if(check_morse_code(sequence, answer)){
             printf("Correct!\n");
             wins++;
-            lives++;
+            if(lives < 3){
+                lives++;
+            }
             correct_answers++;
             led better color
         }

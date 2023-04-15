@@ -8,7 +8,7 @@
 #include "answers.h"
 
 // The global variables used in the code
-int sequence[];
+int sequence[0];
 
 char answer;
 char answer_name;
@@ -131,10 +131,10 @@ void addMorse(unsigned int input)
                 printf("Invalid input!\n");
                 printf("Please try again!\n");
                 printf("The sequence was: \n" sequence_to_string(sequence));
-                // empty the sequence
+                int sequence = [0];
                 return;
             }
-            // empty the sequence
+            int sequence = [0];
             print_level();
         }
         else{
@@ -177,7 +177,7 @@ void addMorse(unsigned int input)
             int sequence = [0];
             print_level();
         }
-    }
+    }   
 }
 
 // print the level

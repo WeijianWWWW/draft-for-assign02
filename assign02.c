@@ -409,11 +409,16 @@ void add_morse_code(int code, int seq[])
 // Check if the sequence morse code is correct
 bool check_morse_code(int seq[], char * answer){
 
-    //char temp = sequence_to_string(seq);
+    char temp = sequence_to_string(seq);
     //int seqLen = strlen(temp);
     // size_t sequenceLength = sizeof(seq) / sizeof(seq[0]);
     // int answerLength = sizeof(answer) / sizeof(answer[0]);
-
+    int seqLen = 0;
+    int i = 0;
+    while (temp[i] != '\0'){
+        seqLen++;
+        i++;
+    }
     int answerLength = strlen(answer);
     if (seqLen != answerLength){
         return false;

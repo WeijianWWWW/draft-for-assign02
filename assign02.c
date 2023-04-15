@@ -7,6 +7,7 @@
 // The global variables used in the code
 int sequence[];
 char answer;
+char answer_name;
 
 int correct_answers = 0;
 int incorrect_answers = 0;
@@ -86,6 +87,7 @@ void read_morse_code(IDK_THE_TYPE_OF_INPUT){
             printf("Game Over!\n");
             led = red
             end_the_game();
+            return;
         }
         if(wins == 5){
             printf("Next Level!\n");
@@ -97,10 +99,32 @@ void read_morse_code(IDK_THE_TYPE_OF_INPUT){
             wins = 0;
         }
         int sequence = [];
+        print_level();
     }
 }
 
 
+// print the level
+void print_level(){
+    if(level == 0){
+        printf("Current diffuculty: 1.Easy\n");
+        printf("The task is: %s\n", answer_name);
+        printf("The required input is: %s\n", answer);
+    }
+    else if(level == 1){
+        printf("Current diffuculty: 2.Medium\n");
+        printf("The task is: %s\n", answer_name);
+    }
+    else if(level == 2){
+        printf("Current diffuculty: 3.Hard\n");
+        printf("The task is: %s\n", answer_name);
+        printf("The required input is: %s\n", answer);
+    }
+    else if(level == 3){
+        printf("Current diffuculty: 4.Impossible\n");
+        printf("The task is: %s\n", answer_name);
+    }
+}
 // End the game and print the stats
 void end_the_game(){
     printf("Number of correct answers: %d\n", correct_answers);

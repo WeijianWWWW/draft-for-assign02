@@ -174,7 +174,7 @@ void addMorse(unsigned int input)
                 }
                 wins = 0;
             }
-            int sequence = [];
+            int sequence = [0];
             print_level();
         }
     }

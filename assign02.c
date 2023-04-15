@@ -107,9 +107,9 @@ void change_led_color(int your_lives) {
 }
 
 // Read the input morse code
-void addMorse(IDK_THE_TYPE_OF_INPUT)
+void addMorse(unsigned int input)
 {
-    if(input != exit){
+    if(input != 0){
         add_morse_code(input, sequence);
     }
     else{
@@ -130,47 +130,53 @@ void addMorse(IDK_THE_TYPE_OF_INPUT)
             else{
                 printf("Invalid input!\n");
                 printf("Please try again!\n");
-                printf("The sequence was: \n");
+                printf("The sequence was: \n" sequence_to_string(sequence));
+                // empty the sequence
+                return;
             }
-        }
-        printf("The sequence was: \n");
-        printf("The translated input was: %s\n", sequence_to_string(answer));
-        print_sequence_code(sequence);
-        if(check_morse_code(sequence, answer)){
-            printf("Correct!\n");
-            wins++;
-            if(lives < 3){
-                lives++;
-            }
-            correct_answers++;
-            change_led_color(lives);
+            // empty the sequence
+            print_level();
         }
         else{
-            printf("Incorrect!\n");
-            lives--;
-            incorrect_answers++;
-            change_led_color(lives);
-        }
-        if (level == 2 || level == 4){
-            printf("The Answer is: %s", sequence_to_string(answer));
-        }
-        if(lives == 0){
-            printf("Game Over!\n");
-            change_led_color(lives);
-            end_the_game();
-            return;
-        }
-        if(wins == 5){
-            printf("Next Level!\n");
-            level++;
-            if(level > 4){
-                printf("You have reached the end! Congratulations!\n");
-                end_the_game();
+            printf("The sequence was: %s\n", sequence_to_string(sequence));
+            // printf("The translated input was: %s\n", sequence_to_string(answer));
+            if(check_morse_code(sequence, answer)){
+                printf("Correct!\n");
+                wins++;
+                if(lives < 3){
+                    lives++;
+                }
+                correct_answers++;
+                change_led_color(lives);
             }
-            wins = 0;
+            else{
+                printf("Incorrect!\n");
+                lives--;
+                incorrect_answers++;
+                change_led_color(lives);
+            }
+            if (level == 2 || level == 4){
+                printf("The Answer is: %s", sequence_to_string(answer));
+            }
+            if(lives == 0){
+                printf("Game Over!\n");
+                change_led_color(lives);
+                end_the_game();
+                return;
+            }
+            if(wins == 5){
+                printf("Next Level!\n");
+                level++;
+                if(level > 4){
+                    printf("You have reached the end! Congratulations!\n");
+                    end_the_game();
+                    return;
+                }
+                wins = 0;
+            }
+            int sequence = [];
+            print_level();
         }
-        int sequence = [];
-        print_level();
     }
 }
 
@@ -201,12 +207,12 @@ void generate_answer(){
     time_t t;
     srand((unsigned) time(&t));
     if(level == 1 || level == 2){
-        int random = rand() % 4;
+        int random = rand() % 26;
         answer = answers[random];
         answer_name = answer_names[random];
     }
     else if(level == 3 || level == 4){
-        int random = rand() % 4;
+        int random = rand() % 28;
         answer = answer_word[random];
         answer_name = answer_word_names[random];
     }
@@ -344,6 +350,7 @@ void add_morse_code(int code, int sequence[])
         output[i] = sequence[i];
     }
     output[length] = code;
+    int sequence[length + 1];
     for (int i = 0; i < length + 1; i++)
     {
         sequence[i] = output[i];
@@ -353,9 +360,10 @@ void add_morse_code(int code, int sequence[])
 
 
 // Check if the sequence morse code is correct
-bool check_morse_code(int sequence[], int answer[]){
+bool check_morse_code(int sequence[], char answer){
     int sequenceLength = sizeof(sequence) / sizeof(sequence[0]);
-    int answerLength = sizeof(answer) / sizeof(answer[0]);
+    // int answerLength = sizeof(answer) / sizeof(answer[0]);
+    int answerLength = strlen(answer);
     if (sequenceLength != answerLength){
         return false;
     }
@@ -366,13 +374,6 @@ bool check_morse_code(int sequence[], int answer[]){
     }
     return true;    
 }
-
-// Print the sequence morse code
-void print_sequence_code(int sequence[]){
-    printf(sequence_to_string(sequence));
-    printf("\n");
-}
-
 
 
 // Convert the morse code to a character

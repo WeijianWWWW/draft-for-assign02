@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
@@ -13,11 +15,11 @@ int sequence[0];
 char answer;
 char answer_name;
 
-int answers[26];
-char answer_names[26];
+char* answers[26];
+char* answer_names[26];
 
-int answer_word[28];
-char answer_word_names[28];
+char* answer_word[28];
+char* answer_word_names[28];
 
 
 int correct_answers = 0;
@@ -30,6 +32,17 @@ int lives = 3;
 
 // Declare the main assembly code entry point.
 void main_asm();
+bool check_morse_code(int seq[], char * answer);
+char sequence_to_string(int seq[]);
+void addMorse(unsigned int input);
+void change_led_color(int your_lives);
+void print_level();
+void generate_answer();
+void initialise_answers();
+void end_the_game();
+void add_morse_code(int code, int seq[]);
+char instance_to_char(int instance);
+bool compare_string_to_string(char seq, char answer);
 
 
 // Initialise a GPIO pin – see SDK for detail on gpio_init()
@@ -130,11 +143,11 @@ void addMorse(unsigned int input)
             else{
                 printf("Invalid input!\n");
                 printf("Please try again!\n");
-                printf("The sequence was: \n" sequence_to_string(sequence));
-                int sequence = [0];
+                printf("The sequence was: %s \n" ,sequence_to_string(sequence));
+                int sequence[0];
                 return;
             }
-            int sequence = [0];
+            int sequence[0];
             print_level();
         }
         else{
@@ -174,11 +187,13 @@ void addMorse(unsigned int input)
                 }
                 wins = 0;
             }
-            int sequence = [0];
+            int sequence[0];
             print_level();
         }
     }   
 }
+
+
 
 // print the level
 void print_level(){
@@ -341,34 +356,38 @@ void end_the_game(){
 
 
 // Add the input morse code to the sequence
-void add_morse_code(int code, int sequence[])
+void add_morse_code(int code, int seq[])
 {
-    int length = sizeof(sequence) / sizeof(sequence[0]); // calculate size of the sequence array
+    int length = sizeof(seq) / sizeof(seq[0]); // calculate size of the sequence array
     int output[length + 1];
     for (int i = 0; i < length; i++)
     {
-        output[i] = sequence[i];
+        output[i] = seq[i];
     }
     output[length] = code;
-    int sequence[length + 1];
-    for (int i = 0; i < length + 1; i++)
-    {
-        sequence[i] = output[i];
-    }
+    //int sequence[length + 1];
+    *sequence = output;
+    
+    
+    //for (int i = 0; i < length + 1; i++)
+    //{
+      
+       // sequence[i] = output[i];
+    //}
     return;
 }
 
 
 // Check if the sequence morse code is correct
-bool check_morse_code(int sequence[], char answer){
-    int sequenceLength = sizeof(sequence) / sizeof(sequence[0]);
+bool check_morse_code(int seq[], char * answer){
+    size_t sequenceLength = sizeof(seq) / sizeof(seq[0]);
     // int answerLength = sizeof(answer) / sizeof(answer[0]);
     int answerLength = strlen(answer);
     if (sequenceLength != answerLength){
         return false;
     }
     for (int i = 0; i < sequenceLength; i++){
-        if (sequence[i] != answer[i]){
+        if (seq[i] != answer[i]){
             return false;
         }
     }
@@ -396,19 +415,19 @@ char instance_to_char(int instance){
 
 
 // Conver whole sequence to a string
-char sequence_to_string(int sequence[]){
-    int sequenceLength = sizeof(sequence) / sizeof(sequence[0]);
+char sequence_to_string(int seq[]){
+    int sequenceLength = sizeof(seq) / sizeof(seq[0]);
     char *output = "";
     for (int i = 0; i < sequenceLength; i++){
-        output += instance_to_char(sequence[i]);
+        output += instance_to_char(seq[i]);
     }
     return output;
 }
 
 
 // Compare the sequence to the answer
-bool compare_string_to_string(char sequence, char answer){
-    if(strcmp(sequence, answer) == 0){
+bool compare_string_to_string(char seq, char answer){
+    if(strcmp(seq, answer) == 0){
         return true;
     }
     else{

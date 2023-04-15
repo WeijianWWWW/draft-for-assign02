@@ -44,6 +44,7 @@ void end_the_game();
 void add_morse_code(int code, int seq[]);
 char instance_to_char(int instance);
 bool compare_string_to_string(char seq, char answer);
+char sequence_to_letters(char* seq);
 
 
 // Initialise a GPIO pin – see SDK for detail on gpio_init()
@@ -145,11 +146,13 @@ void addMorse(unsigned int input)
                 printf("Invalid input!\n");
                 printf("Please try again!\n");
                 printf("The sequence was: %s \n" ,sequence_to_string(sequence));
-                printf("The translated input was: %s \n", sequence_to_letters(sequence_to_string(sequence)));
-                int sequence[0];
+                printf("The translated input was: %s \n", sequence_to_letters((char*)sequence_to_string(sequence)));
+    
+                sequence = seq_empty;
                 return;
             }
-            int sequence[0];
+
+            sequence = seq_empty;
             print_level();
         }
         else{
@@ -167,7 +170,7 @@ void addMorse(unsigned int input)
             else{
                 printf("Incorrect!\n");
                 printf("The sequence was: %s\n", sequence_to_string(sequence));
-                printf("The translated input was: %s\n", sequence_to_letters(sequence_to_string(sequence));
+                printf("The translated input was: %s\n", sequence_to_letters(sequence_to_string(sequence)));
                 lives--;
                 incorrect_answers++;
                 change_led_color(lives);
@@ -405,13 +408,17 @@ void add_morse_code(int code, int seq[])
 
 // Check if the sequence morse code is correct
 bool check_morse_code(int seq[], char * answer){
-    size_t sequenceLength = sizeof(seq) / sizeof(seq[0]);
+
+    //char temp = sequence_to_string(seq);
+    //int seqLen = strlen(temp);
+    // size_t sequenceLength = sizeof(seq) / sizeof(seq[0]);
     // int answerLength = sizeof(answer) / sizeof(answer[0]);
+
     int answerLength = strlen(answer);
-    if (sequenceLength != answerLength){
+    if (seqLen != answerLength){
         return false;
     }
-    for (int i = 0; i < sequenceLength; i++){
+    for (int i = 0; i < seqLen; i++){
         if (seq[i] != answer[i]){
             return false;
         }
@@ -448,7 +455,7 @@ char sequence_to_string(int seq[]){
     i++;
     }
     
-    return output;
+    return  output;
 }
 
 

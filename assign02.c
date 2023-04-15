@@ -386,15 +386,32 @@ char sequence_to_letters(char* seq){
 // Add the input morse code to the sequence
 void add_morse_code(int code, int seq[])
 {
-    int length = sizeof(seq) / sizeof(seq[0]); // calculate size of the sequence array
-    int output[length + 1];
-    for (int i = 0; i < length; i++)
-    {
-        output[i] = seq[i];
+    if(*seq == seq_empty){
+        int output[1];
+        output[0] = code;
+        *seq = output;
+        return;
     }
-    output[length] = code;
-    *sequence = output;
-    return;
+    else{
+        char *temp = sequence_to_string(seq);
+        int seqLen = 0;
+        int i = 0;
+        while (temp[i] != '\0')
+        {
+            seqLen++;
+            i++;
+        }
+
+        int length = sizeof(seq) / sizeof(seq[0]); // calculate size of the sequence array
+        int output[length + 1];
+        for (int i = 0; i < length; i++)
+        {
+            output[i] = seq[i];
+        }
+        output[length] = code;
+        *sequence = output;
+        return;
+    }
 }
 
 

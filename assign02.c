@@ -102,6 +102,26 @@ void read_morse_code(IDK_THE_TYPE_OF_INPUT){
         add_morse_code(input, sequence);
     }
     else{
+        // TODO: start the game
+        if(level == 0){
+            if (check_morse_code(sequence, answers_word[19])){
+                level = 1;
+            }
+            else if (check_morse_code(sequence, answers_word[20])){
+                level = 2;
+            }
+            // else if (check_morse_code(sequence, answers_word[21])){
+            //     level = 3;
+            // }
+            // else if (check_morse_code(sequence, answers_word[22])){
+            //     level = 4;
+            // }
+            else{
+                printf("Invalid input!\n");
+                printf("Please try again!\n");
+                printf("The sequence was: \n");
+            }
+        }
         printf("The sequence was: \n");
         printf("The translated input was: %s\n", sequence_to_string(answer));
         print_sequence_code(sequence);
@@ -383,8 +403,8 @@ int main()
     stdio_init_all();             // Initialise all basic IO
     printf("......Morse Code game start......\n"); // Basic print to console
     printf("Chose the difficulty\n")
-    printf("1. Easy\n");
-    printf("2. Medium\n");
+    printf("1. Easy (hint: %s)\n", answers_word[19]);
+    printf("2. Medium (hint: %s)\n", answers_word[20]);
     printf("Enter the sequence for the level difficutly number\n");
     // printf("3. Hard\n");
     // printf("4. Impossible\n");

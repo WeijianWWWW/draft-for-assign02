@@ -16,7 +16,7 @@ char answer_name;
 int answers[26];
 char answer_names[26];
 
-int answers_word[28];
+int answer_word[28];
 char answer_word_names[28];
 
 
@@ -115,16 +115,16 @@ void addMorse(IDK_THE_TYPE_OF_INPUT)
     else{
         // TODO: start the game
         if(level == 0){
-            if (check_morse_code(sequence, answers_word[19])){
+            if (check_morse_code(sequence, answer_word[19])){
                 level = 1;
             }
-            else if (check_morse_code(sequence, answers_word[20])){
+            else if (check_morse_code(sequence, answer_word[20])){
                 level = 2;
             }
-            // else if (check_morse_code(sequence, answers_word[21])){
+            // else if (check_morse_code(sequence, answer_word[21])){
             //     level = 3;
             // }
-            // else if (check_morse_code(sequence, answers_word[22])){
+            // else if (check_morse_code(sequence, answer_word[22])){
             //     level = 4;
             // }
             else{
@@ -207,7 +207,7 @@ void generate_answer(){
     }
     else if(level == 3 || level == 4){
         int random = rand() % 4;
-        answer = answers_word[random];
+        answer = answer_word[random];
         answer_name = answer_word_names[random];
     }
 }
@@ -267,34 +267,35 @@ void initialise_answers(){
     answer_names[24] = "Y";
     answer_names[25] = "Z";
 
-    answer_word[0] =TO 
-    answer_word[1] =ME 
-    answer_word[2] =MOM 
-    answer_word[3] =NOW 
-    answer_word[4] =DOT 
-    answer_word[5] =DOG 
-    answer_word[6] =CAT 
-    answer_word[7] =DAD
-    answer_word[8] =TOM 
-    answer_word[9] =WILSON 
-    answer_word[10] =DIMA 
-    answer_word[11] =KOSTYA 
-    answer_word[12] =FISH 
-    answer_word[13] =PICO 
-    answer_word[14] =ALARM 
-    answer_word[15] =IRELAND 
-    answer_word[16] =TRINITY 
-    answer_word[17] =COLLEGE 
-    answer_word[18] =ZERO 
-    answer_word[19] =ONE 
-    answer_word[20] =TWO 
-    answer_word[21] =THREE 
-    answer_word[22] =FOUR 
-    answer_word[23] =FIVE 
-    answer_word[24] =SIX 
-    answer_word[25] =SEVEN 
-    answer_word[26] =EIGHT 
-    answer_word[27] =NINE 
+
+    answer_word[0] =TO ;
+    answer_word[1] =ME ;
+    answer_word[2] =MOM ;
+    answer_word[3] =NOW ;
+    answer_word[4] =DOT ;
+    answer_word[5] =DOG ;
+    answer_word[6] =CAT ;
+    answer_word[7] =DAD;
+    answer_word[8] =TOM ;
+    answer_word[9] =WILSON ;
+    answer_word[10] =DIMA ;
+    answer_word[11] =KOSTYA ;
+    answer_word[12] =FISH ;
+    answer_word[13] =PICO ;
+    answer_word[14] =ALARM ;
+    answer_word[15] =IRELAND ;
+    answer_word[16] =TRINITY ;
+    answer_word[17] =COLLEGE ;
+    answer_word[18] =ZERO ;
+    answer_word[19] =ONE ;
+    answer_word[20] =TWO ;
+    answer_word[21] =THREE ;
+    answer_word[22] =FOUR ;
+    answer_word[23] =FIVE ;
+    answer_word[24] =SIX ;
+    answer_word[25] =SEVEN ;
+    answer_word[26] =EIGHT ;
+    answer_word[27] =NINE ;
     answer_word_names[0] = "TO";
     answer_word_names[1] = "ME";
     answer_word_names[2] = "MOM";
@@ -336,23 +337,29 @@ void end_the_game(){
 // Add the input morse code to the sequence
 void add_morse_code(int code, int sequence[])
 {
-    int output[sequence.length + 1];
-    for (int i = 0; i < sequence.length; i++)
+    int length = sizeof(sequence) / sizeof(sequence[0]); // calculate size of the sequence array
+    int output[length + 1];
+    for (int i = 0; i < length; i++)
     {
         output[i] = sequence[i];
     }
-    output[sequence.length] = code;
-    sequence = output;
+    output[length] = code;
+    for (int i = 0; i < length + 1; i++)
+    {
+        sequence[i] = output[i];
+    }
     return;
 }
 
 
 // Check if the sequence morse code is correct
 bool check_morse_code(int sequence[], int answer[]){
-    if (sequence.length != answer.length){
+    int sequenceLength = sizeof(sequence) / sizeof(sequence[0]);
+    int answerLength = sizeof(answer) / sizeof(answer[0]);
+    if (sequenceLength != answerLength){
         return false;
     }
-    for (int i = 0; i < sequence.length; i++){
+    for (int i = 0; i < sequenceLength; i++){
         if (sequence[i] != answer[i]){
             return false;
         }
@@ -382,15 +389,16 @@ char instance_to_char(int instance){
         return ' ';
     }
     else{
-        return '';
+        return '\0';
     }
 }
 
 
 // Conver whole sequence to a string
 char sequence_to_string(int sequence[]){
+    int sequenceLength = sizeof(sequence) / sizeof(sequence[0]);
     char *output = "";
-    for (int i = 0; i < sequence.length; i++){
+    for (int i = 0; i < sequenceLength; i++){
         output += instance_to_char(sequence[i]);
     }
     return output;
@@ -435,8 +443,8 @@ int main()
     printf("To advance to the next level, get 5 right answers in a row.\n");
     printf("+---------------------------------------------------------------------------------------+\n");
     printf("You can choose the difficulty level by entering the sequence for the level number:\n");
-    printf("1. Easy (hint: %s)\n", answers_word[19]);
-    printf("2. Medium (hint: %s)\n", answers_word[20]);
+    printf("1. Easy (hint: %s)\n", answer_word[19]);
+    printf("2. Medium (hint: %s)\n", answer_word[20]);
     //printf("Enter the sequence for the level difficutly number\n");
     // printf("3. Hard\n");
     // printf("4. Impossible\n");

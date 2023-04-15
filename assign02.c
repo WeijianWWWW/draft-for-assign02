@@ -10,7 +10,8 @@
 #include "answers.h"
 
 // The global variables used in the code
-int seq_empty[]; // empty sequence
+int seq_empty[1] = {-1}; // empty sequence
+
 int *sequence = seq_empty; // pointer to the sequence
 
 char* answer;
@@ -43,7 +44,7 @@ void initialise_answers();
 void end_the_game();
 void add_morse_code(int code, int seq[]);
 char instance_to_char(int instance);
-bool compare_string_to_string(char seq, char answer);
+
 char sequence_to_letters(char* seq);
 
 
@@ -58,6 +59,11 @@ void asm_gpio_init(uint pin)
 void asm_gpio_set_dir(uint pin, bool out)
 {
     gpio_set_dir(pin, out);
+}
+
+void asm_gpio_set_irq_rise(uint pin)
+{
+    gpio_set_irq_enabled(pin, GPIO_IRQ_EDGE_RISE, true);
 }
 
 
@@ -76,7 +82,7 @@ void asm_gpio_put(uint pin, bool value)
 
 
 // Enable falling-edge interrupt – see SDK for detail on gpio_set_irq_enabled()
-void asm_gpio_set_irq(uint pin)
+void asm_gpio_set_irq_fall(uint pin)
 {
     gpio_set_irq_enabled(pin, GPIO_IRQ_EDGE_FALL, true);
 }
@@ -386,10 +392,10 @@ char sequence_to_letters(char* seq){
 // Add the input morse code to the sequence
 void add_morse_code(int code, int seq[])
 {
-    if(*seq == seq_empty){
+    if(sequence[0] == -1){
         int output[1];
         output[0] = code;
-        *seq = output;
+        sequence = output;
         return;
     }
     else{
@@ -402,14 +408,14 @@ void add_morse_code(int code, int seq[])
             i++;
         }
 
-        int length = sizeof(seq) / sizeof(seq[0]); // calculate size of the sequence array
-        int output[length + 1];
-        for (int i = 0; i < length; i++)
+        //int length = sizeof(seq) / sizeof(seq[0]); 
+        int output[seqLen + 1];
+        for (int i = 0; i < seqLen; i++)
         {
             output[i] = seq[i];
         }
-        output[length] = code;
-        *sequence = output;
+        output[seqLen] = code;
+        sequence = output;
         return;
     }
 }
@@ -462,7 +468,7 @@ char instance_to_char(int instance){
 
 // Conver whole sequence to a string
 char* sequence_to_string(int seq[]){
-    char output;
+    char* output;
     int i = 0;
     while (seq[i] != '\0'){
     output += instance_to_char(seq[i]);
@@ -473,15 +479,6 @@ char* sequence_to_string(int seq[]){
 }
 
 
-// Compare the sequence to the answer
-bool compare_string_to_string(char seq, char answer){
-    if(strcmp(seq, answer) == 0){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
 
 
 // Main entry point of the application

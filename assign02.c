@@ -354,6 +354,29 @@ void end_the_game(){
     printf("Accuracy: %d\n", (correct_answers / (correct_answers + incorrect_answers)) * 100);
 }
 
+char sequence_to_letters(char* seq){
+
+     int num_letters = 26;
+     char output;
+for (int l = 0; seq[l] != '\0'; l++) {
+        char temp[5] = "";
+        int k = 0;
+        while (seq[l] != ' ' && seq[l] != '\0') {
+            temp[k++] = seq[l++];
+        }
+        for (int j = 0; j < num_letters; j++) {
+        if (strcmp(temp, answers[j]) == 0) {
+            output += *answer_names[j];
+            break;
+        }
+     }
+
+}
+
+    return output;
+
+}
+
 
 // Add the input morse code to the sequence
 void add_morse_code(int code, int seq[])
@@ -416,11 +439,13 @@ char instance_to_char(int instance){
 
 // Conver whole sequence to a string
 char sequence_to_string(int seq[]){
-    int sequenceLength = sizeof(seq) / sizeof(seq[0]);
-    char *output = "";
-    for (int i = 0; i < sequenceLength; i++){
-        output += instance_to_char(seq[i]);
+    char output;
+    int i = 0;
+    while (seq[i] != '\0'){
+    output += instance_to_char(seq[i]);
+    i++;
     }
+    
     return output;
 }
 

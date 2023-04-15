@@ -402,10 +402,29 @@ int main()
     initialise_answers();         // Initialise the answers
     stdio_init_all();             // Initialise all basic IO
     printf("......Morse Code game start......\n"); // Basic print to console
-    printf("Chose the difficulty\n")
+
+    printf("+---------------------------------------------------------------------------------------+\n");
+    printf(":                                Assignment 2 by Group 30                               :\n");
+    printf("+---------------------------------------------------------------------------------------+\n");
+    printf("+---------------------------------------------------------------------------------------+\n");
+    printf(":                                   Welcome to the                                      :\n");
+    printf(":                                   Morse Code Game                                     :\n");
+    printf("+---------------------------------------------------------------------------------------+\n");
+    printf("The rules:\n"); 
+    printf("Use GP21 button in order to enter Morse code sequence when asked\n"); 
+    printf("If you get it correct you gain a life, if not - you lose one.\n");
+    printf("LED is the indicator of lives' amount. Max lives - 3; when 0 is left - game over\n");
+    printf("4 difficulty levels: \n");
+    printf("1. Character and morse sequence displayed \n");
+    printf("2. Only character is displayed \n");
+    printf("3. Word and morse sequence displayed \n");
+    printf("4. Only word is displayed \n");
+    printf("To advance to the next level, get 5 right answers in a row.\n");
+    printf("+---------------------------------------------------------------------------------------+\n");
+    printf("You can choose the difficulty level by entering the sequence for the level number:\n");
     printf("1. Easy (hint: %s)\n", answers_word[19]);
     printf("2. Medium (hint: %s)\n", answers_word[20]);
-    printf("Enter the sequence for the level difficutly number\n");
+    //printf("Enter the sequence for the level difficutly number\n");
     // printf("3. Hard\n");
     // printf("4. Impossible\n");
     main_asm();                   // Jump into the ASM code

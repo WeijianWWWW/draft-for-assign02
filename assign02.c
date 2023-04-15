@@ -2,12 +2,20 @@
 #include <string.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
-#include "assign02.h"
+#include "answers.h"
 
 // The global variables used in the code
 int sequence[];
+
 char answer;
 char answer_name;
+
+int answers[26];
+char answer_names[26];
+
+int answers_word[28];
+char answer_word_names[28];
+
 
 int correct_answers = 0;
 int incorrect_answers = 0;
@@ -125,6 +133,135 @@ void print_level(){
         printf("The task is: %s\n", answer_name);
     }
 }
+
+// Generate random answer
+void generate_answer(){
+    time_t t;
+    srand((unsigned) time(&t));
+    if(level == 1 || level == 2){
+        int random = rand() % 4;
+        answer = answers[random];
+        answer_name = answer_names[random];
+    }
+    else if(level == 3 || level == 4){
+        int random = rand() % 4;
+        answer = answers_word[random];
+        answer_name = answer_word_names[random];
+    }
+}
+
+// initialise answers[] and answer_names[] from the file answers.h
+void initialise_answers(){
+    answers[0] = A;
+    answers[1] = B;
+    answers[2] = C;
+    answers[3] = D;
+    answers[4] = E;
+    answers[5] = F;
+    answers[6] = G;
+    answers[7] = H;
+    answers[8] = I;
+    answers[9] = J;
+    answers[10] = K;
+    answers[11] = L;
+    answers[12] = M;
+    answers[13] = N;
+    answers[14] = O;
+    answers[15] = P;
+    answers[16] = Q;
+    answers[17] = R;
+    answers[18] = S;
+    answers[19] = T;
+    answers[20] = U;
+    answers[21] = V;
+    answers[22] = W;
+    answers[23] = X;
+    answers[24] = Y;
+    answers[25] = Z;
+    answer_names[0] = "A";
+    answer_names[1] = "B";
+    answer_names[2] = "C";
+    answer_names[3] = "D";
+    answer_names[4] = "E";
+    answer_names[5] = "F";
+    answer_names[6] = "G";
+    answer_names[7] = "H";
+    answer_names[8] = "I";
+    answer_names[9] = "J";
+    answer_names[10] = "K";
+    answer_names[11] = "L";
+    answer_names[12] = "M";
+    answer_names[13] = "N";
+    answer_names[14] = "O";
+    answer_names[15] = "P";
+    answer_names[16] = "Q";
+    answer_names[17] = "R";
+    answer_names[18] = "S";
+    answer_names[19] = "T";
+    answer_names[20] = "U";
+    answer_names[21] = "V";
+    answer_names[22] = "W";
+    answer_names[23] = "X";
+    answer_names[24] = "Y";
+    answer_names[25] = "Z";
+
+    answer_word[0] =TO 
+    answer_word[1] =ME 
+    answer_word[2] =MOM 
+    answer_word[3] =NOW 
+    answer_word[4] =DOT 
+    answer_word[5] =DOG 
+    answer_word[6] =CAT 
+    answer_word[7] =DAD
+    answer_word[8] =TOM 
+    answer_word[9] =WILSON 
+    answer_word[10] =DIMA 
+    answer_word[11] =KOSTYA 
+    answer_word[12] =FISH 
+    answer_word[13] =PICO 
+    answer_word[14] =ALARM 
+    answer_word[15] =IRELAND 
+    answer_word[16] =TRINITY 
+    answer_word[17] =COLLEGE 
+    answer_word[18] =ZERO 
+    answer_word[19] =ONE 
+    answer_word[20] =TWO 
+    answer_word[21] =THREE 
+    answer_word[22] =FOUR 
+    answer_word[23] =FIVE 
+    answer_word[24] =SIX 
+    answer_word[25] =SEVEN 
+    answer_word[26] =EIGHT 
+    answer_word[27] =NINE 
+    answer_word_names[0] = "TO";
+    answer_word_names[1] = "ME";
+    answer_word_names[2] = "MOM";
+    answer_word_names[3] = "NOW";
+    answer_word_names[4] = "DOT";
+    answer_word_names[5] = "DOG";
+    answer_word_names[6] = "CAT";
+    answer_word_names[7] = "DAD";
+    answer_word_names[8] = "TOM";
+    answer_word_names[9] = "WILSON";
+    answer_word_names[10] = "DIMA";
+    answer_word_names[11] = "KOSTYA";
+    answer_word_names[12] = "FISH";
+    answer_word_names[13] = "PICO";
+    answer_word_names[14] = "ALARM";
+    answer_word_names[15] = "IRELAND";
+    answer_word_names[16] = "TRINITY";
+    answer_word_names[17] = "COLLEGE";
+    answer_word_names[18] = "ZERO";
+    answer_word_names[19] = "ONE";
+    answer_word_names[20] = "TWO";
+    answer_word_names[21] = "THREE";
+    answer_word_names[22] = "FOUR";
+    answer_word_names[23] = "FIVE";
+    answer_word_names[24] = "SIX";
+    answer_word_names[25] = "SEVEN";
+    answer_word_names[26] = "EIGHT";
+    answer_word_names[27] = "NINE";
+}
 // End the game and print the stats
 void end_the_game(){
     printf("Number of correct answers: %d\n", correct_answers);
@@ -210,6 +347,7 @@ bool compare_string_to_string(char sequence, char answer){
 // Main entry point of the application
 int main()
 {
+    initialise_answers();         // Initialise the answers
     stdio_init_all();             // Initialise all basic IO
     printf("......Morse Code game start......\n"); // Basic print to console
     printf("Chose the difficulty\n")

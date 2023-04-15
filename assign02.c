@@ -13,8 +13,8 @@
 int seq_empty[]; // empty sequence
 int *sequence = seq_empty; // pointer to the sequence
 
-char answer;
-char answer_name;
+char* answer;
+char* answer_name;
 
 char* answers[26];
 char* answer_names[26];
@@ -34,7 +34,7 @@ int lives = 3;
 // Declare the main assembly code entry point.
 void main_asm();
 bool check_morse_code(int seq[], char * answer);
-char sequence_to_string(int seq[]);
+char* sequence_to_string(int seq[]);
 void addMorse(unsigned int input);
 void change_led_color(int your_lives);
 void print_level();
@@ -176,7 +176,7 @@ void addMorse(unsigned int input)
                 change_led_color(lives);
             }
             if (level == 2 || level == 4){
-                printf("The Answer is: %s", sequence_to_string(answer));
+                printf("The Answer is: %s", answer);
             }
             if(lives == 0){
                 printf("Game Over!\n");
@@ -393,15 +393,7 @@ void add_morse_code(int code, int seq[])
         output[i] = seq[i];
     }
     output[length] = code;
-    //int sequence[length + 1];
     *sequence = output;
-    
-    
-    //for (int i = 0; i < length + 1; i++)
-    //{
-      
-       // sequence[i] = output[i];
-    //}
     return;
 }
 
@@ -409,7 +401,7 @@ void add_morse_code(int code, int seq[])
 // Check if the sequence morse code is correct
 bool check_morse_code(int seq[], char * answer){
 
-    char temp = sequence_to_string(seq);
+    char* temp = sequence_to_string(seq);
     //int seqLen = strlen(temp);
     // size_t sequenceLength = sizeof(seq) / sizeof(seq[0]);
     // int answerLength = sizeof(answer) / sizeof(answer[0]);
@@ -452,7 +444,7 @@ char instance_to_char(int instance){
 
 
 // Conver whole sequence to a string
-char sequence_to_string(int seq[]){
+char* sequence_to_string(int seq[]){
     char output;
     int i = 0;
     while (seq[i] != '\0'){

@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "pico/stdlib.h"
-#include "hardware/gpio.h"
+#include "hardware/pio.h"
+#include "hardware/clocks.h"
+#include "ws2812.pio.h"
+#include "hardware/watchdog.h"
 #include "answers.h"
 
 // The global variables used in the code
@@ -63,6 +66,35 @@ void asm_gpio_set_irq(uint pin)
     gpio_set_irq_enabled(pin, GPIO_IRQ_EDGE_FALL, true);
 }
 
+static inline void put_pixel(uint32_t pixel_grb) {
+    pio_sm_put_blocking(pio0, 0, pixel_grb << 8u);
+}
+
+static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b) {
+    return  ((uint32_t) (r) << 8)  |
+            ((uint32_t) (g) << 16) |
+            (uint32_t) (b);
+}
+
+void change_led_color(int your_lives) {
+    switch(your_lives) {
+        case 0:
+            put_pixel(urgb_u32(0xFF, 0x00, 0x00)); // Set the RGB LED color to red
+            break;
+        case 1:
+            put_pixel(urgb_u32(0xFF, 0xA5, 0x00)); // Set the RGB LED color to orange
+            break;
+        case 2:
+            put_pixel(urgb_u32(0x00, 0x00, 0xFF)); // Set the RGB LED color to blue
+            break;
+        case 3:
+            put_pixel(urgb_u32(0x00, 0xFF, 0x00)); // Set the RGB LED color to green
+            break;
+        default:
+           
+            break;
+    }
+}
 
 // Read the input morse code
 void read_morse_code(IDK_THE_TYPE_OF_INPUT){
@@ -80,20 +112,20 @@ void read_morse_code(IDK_THE_TYPE_OF_INPUT){
                 lives++;
             }
             correct_answers++;
-            led better color
+            change_led_color(lives);
         }
         else{
             printf("Incorrect!\n");
             lives--;
             incorrect_answers++;
-            led worse color
+            change_led_color(lives);
         }
         if (level == 2 || level == 4){
             printf("The Answer is: %s", sequence_to_string(answer));
         }
         if(lives == 0){
             printf("Game Over!\n");
-            led = red
+            change_led_color(lives);
             end_the_game();
             return;
         }

@@ -66,6 +66,16 @@ void asm_gpio_set_irq(uint pin)
     gpio_set_irq_enabled(pin, GPIO_IRQ_EDGE_FALL, true);
 }
 
+void watchdog_init()
+{
+    if (watchdog_caused_reboot())
+    { 
+        printf("\nNo input last 9 seconds. Rebooted.\n");
+    }
+    watchdog_enable(0x7fffff, 1); // enable the watchdog timer to max time (approx 8.3 secs)
+    watchdog_update();
+}
+
 static inline void put_pixel(uint32_t pixel_grb) {
     pio_sm_put_blocking(pio0, 0, pixel_grb << 8u);
 }
@@ -401,6 +411,7 @@ int main()
 {
     initialise_answers();         // Initialise the answers
     stdio_init_all();             // Initialise all basic IO
+    watchdog_init();
     printf("......Morse Code game start......\n"); // Basic print to console
 
     printf("+---------------------------------------------------------------------------------------+\n");
@@ -427,6 +438,7 @@ int main()
     //printf("Enter the sequence for the level difficutly number\n");
     // printf("3. Hard\n");
     // printf("4. Impossible\n");
+    watchdog_update();
     main_asm();                   // Jump into the ASM code
     return 0;                     // Application return code
 }

@@ -366,6 +366,8 @@ void print_sequence_code(int sequence[]){
     printf("\n");
 }
 
+
+
 // Convert the morse code to a character
 char instance_to_char(int instance){
     if (instance == 0)

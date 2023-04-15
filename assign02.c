@@ -169,7 +169,7 @@ void addMorse(IDK_THE_TYPE_OF_INPUT)
             }
             wins = 0;
         }
-        int sequence = [];
+        int sequence = [0];
         print_level();
     }
 }

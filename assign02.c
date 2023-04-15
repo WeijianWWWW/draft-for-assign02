@@ -10,7 +10,8 @@
 #include "answers.h"
 
 // The global variables used in the code
-int sequence[0];
+int seq_empty[]; // empty sequence
+int *sequence = seq_empty; // pointer to the sequence
 
 char answer;
 char answer_name;
@@ -144,6 +145,7 @@ void addMorse(unsigned int input)
                 printf("Invalid input!\n");
                 printf("Please try again!\n");
                 printf("The sequence was: %s \n" ,sequence_to_string(sequence));
+                printf("The translated input was: %s \n", sequence_to_letters(sequence_to_string(sequence)));
                 int sequence[0];
                 return;
             }
@@ -164,6 +166,8 @@ void addMorse(unsigned int input)
             }
             else{
                 printf("Incorrect!\n");
+                printf("The sequence was: %s\n", sequence_to_string(sequence));
+                printf("The translated input was: %s\n", sequence_to_letters(sequence_to_string(sequence));
                 lives--;
                 incorrect_answers++;
                 change_led_color(lives);
@@ -187,9 +191,10 @@ void addMorse(unsigned int input)
                 }
                 wins = 0;
             }
-            int sequence[0];
+            int seq_empty[0];
+            sequence = seq_empty;
             print_level();
-        }
+        }   
     }   
 }
 
@@ -358,23 +363,20 @@ char sequence_to_letters(char* seq){
 
      int num_letters = 26;
      char output;
-for (int l = 0; seq[l] != '\0'; l++) {
+    for (int l = 0; seq[l] != '\0'; l++) {
         char temp[5] = "";
         int k = 0;
         while (seq[l] != ' ' && seq[l] != '\0') {
             temp[k++] = seq[l++];
         }
         for (int j = 0; j < num_letters; j++) {
-        if (strcmp(temp, answers[j]) == 0) {
-            output += *answer_names[j];
-            break;
+            if (strcmp(temp, answers[j]) == 0) {
+                output += *answer_names[j];
+                break;
+            }
         }
-     }
-
-}
-
+    }
     return output;
-
 }
 
 

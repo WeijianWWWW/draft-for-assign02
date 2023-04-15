@@ -107,7 +107,8 @@ void change_led_color(int your_lives) {
 }
 
 // Read the input morse code
-void read_morse_code(IDK_THE_TYPE_OF_INPUT){
+void addMorse(IDK_THE_TYPE_OF_INPUT)
+{
     if(input != exit){
         add_morse_code(input, sequence);
     }
@@ -172,7 +173,6 @@ void read_morse_code(IDK_THE_TYPE_OF_INPUT){
         print_level();
     }
 }
-
 
 // print the level
 void print_level(){

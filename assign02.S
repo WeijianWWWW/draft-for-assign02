@@ -195,6 +195,6 @@ end_all:
 @ Set data alignment
 .data
     .align 4
-start_time: .word  DFLT_TIME
-end_time:.word   DFLT_TIME
-interval:.word   DFLT_TIME
+start_time: .word  0
+end_time:.word   0
+interval:.word   0

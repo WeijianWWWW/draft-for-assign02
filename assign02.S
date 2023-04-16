@@ -24,7 +24,7 @@
 .equ ALRM_ISR_OFFSET, 0x40      
 .equ DFLT_ALARM_TIME, 3000000   
 
-.equ MORSE_MEMORY, 0x10000010   //Address where the morse string will be stored
+
 
 
 @ Entry point to the ASM portion of the program

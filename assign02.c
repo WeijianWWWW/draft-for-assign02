@@ -9,6 +9,10 @@
 #include "hardware/watchdog.h"
 #include "answers.h"
 
+#define IS_RGBW true        // Will use RGBW format
+#define NUM_PIXELS 1        // There is 1 WS2812 device in the chain
+#define WS2812_PIN 28       // The GPIO pin that the WS2812 connected to
+
 // The global variables used in the code
 char seq_empty[1] = {'1'}; // empty sequence
 
@@ -37,7 +41,7 @@ void main_asm();
 bool check_morse_code(char *seq, char *answer);
 char *sequence_to_string();
 void addMorse(char input);
-void change_led_color(int your_lives);
+void change_led_color(int lives);
 void print_level();
 void generate_answer();
 void initialise_answers();
@@ -104,9 +108,9 @@ static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b)
            (uint32_t)(b);
 }
 
-void change_led_color(int your_lives)
+void change_led_color(int lives)
 {
-    switch (your_lives)
+    switch (lives)
     {
     case 0:
         put_pixel(urgb_u32(0xFF, 0x00, 0x00)); // Set the RGB LED color to red
@@ -526,6 +530,11 @@ int main()
 {
     initialise_answers(); // Initialise the answers
     stdio_init_all();     // Initialise all basic IO
+    PIO pio = pio0;
+    uint offset = pio_add_program(pio, &ws2812_program);
+    ws2812_program_init(pio, 0, offset, WS2812_PIN, 800000, IS_RGBW);
+    watchdog_init();
+    put_pixel(urgb_u32(0x00, 0xFF, 0x00));
     watchdog_init();
     printf("......Morse Code game start......\n"); // Basic print to console
 

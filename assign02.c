@@ -119,7 +119,7 @@ void change_led_color(int lives)
         put_pixel(urgb_u32(0xFF, 0xA5, 0x00)); // Set the RGB LED color to orange
         break;
     case 2:
-        put_pixel(urgb_u32(0x00, 0x00, 0xFF)); // Set the RGB LED color to blue
+        put_pixel(urgb_u32(0xFF, 0x69, 0xB4)); // pink color (255, 105, 180)
         break;
     case 3:
         put_pixel(urgb_u32(0x00, 0xFF, 0x00)); // Set the RGB LED color to green
@@ -536,7 +536,7 @@ int main()
     PIO pio = pio0;
     uint offset = pio_add_program(pio, &ws2812_program);
     ws2812_program_init(pio, 0, offset, WS2812_PIN, 800000, IS_RGBW);
-    put_pixel(urgb_u32(0x00, 0xFF, 0x00));
+    put_pixel(urgb_u32(0x00, 0x00, 0xFF));
     watchdog_init();
     printf("\033[1;37m"); // Set the console text colour to white
     printf("......Morse Code game start......\n"); // Basic print to console

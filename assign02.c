@@ -287,7 +287,7 @@ void reserve_space()
 // initialise answers[] and answer_names[] from the file answers.h
 void initialise_answers()
 {
-    sequence = calloc(56, sizeof(char));
+    sequence = calloc(1, sizeof(char));
     answers[0] = A;
     answers[1] = B;
     answers[2] = C;

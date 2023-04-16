@@ -14,15 +14,14 @@ int seq_empty[1] = {-1}; // empty sequence
 
 int *sequence = seq_empty; // pointer to the sequence
 
-char* answer;
-char* answer_name;
+char *answer;
+char *answer_name;
 
-char* answers[26];
-char* answer_names[26];
+char *answers[26];
+char *answer_names[26];
 
-char* answer_word[28];
-char* answer_word_names[28];
-
+char *answer_word[28];
+char *answer_word_names[28];
 
 int correct_answers = 0;
 int incorrect_answers = 0;
@@ -31,29 +30,28 @@ int level = 0;
 int wins = 0;
 int lives = 3;
 
+int seqLen = 0;
 
 // Declare the main assembly code entry point.
 void main_asm();
-bool check_morse_code(int seq[], char * answer);
-char* sequence_to_string(int seq[]);
+bool check_morse_code(int seq[], char *answer);
+char *sequence_to_string();
 void addMorse(unsigned int input);
 void change_led_color(int your_lives);
 void print_level();
 void generate_answer();
 void initialise_answers();
 void end_the_game();
-void add_morse_code(int code, int seq[]);
+void add_morse_code(int code);
 char instance_to_char(int instance);
 
-char sequence_to_letters(char* seq);
-
+char sequence_to_letters(char *seq);
 
 // Initialise a GPIO pin – see SDK for detail on gpio_init()
 void asm_gpio_init(uint pin)
 {
     gpio_init(pin);
 }
-
 
 // Set direction of a GPIO pin – see SDK for detail on gpio_set_dir()
 void asm_gpio_set_dir(uint pin, bool out)
@@ -66,20 +64,17 @@ void asm_gpio_set_irq_rise(uint pin)
     gpio_set_irq_enabled(pin, GPIO_IRQ_EDGE_RISE, true);
 }
 
-
 // Get the value of a GPIO pin – see SDK for detail on gpio_get()
 bool asm_gpio_get(uint pin)
 {
     return gpio_get(pin);
 }
 
-
 // Set the value of a GPIO pin – see SDK for detail on gpio_put()
 void asm_gpio_put(uint pin, bool value)
 {
     gpio_put(pin, value);
 }
-
 
 // Enable falling-edge interrupt – see SDK for detail on gpio_set_irq_enabled()
 void asm_gpio_set_irq_fall(uint pin)
@@ -90,56 +85,65 @@ void asm_gpio_set_irq_fall(uint pin)
 void watchdog_init()
 {
     if (watchdog_caused_reboot())
-    { 
+    {
         printf("\nNo input last 9 seconds. Rebooted.\n");
     }
     watchdog_enable(0x7fffff, 1); // enable the watchdog timer to max time (approx 8.3 secs)
     watchdog_update();
 }
 
-static inline void put_pixel(uint32_t pixel_grb) {
+static inline void put_pixel(uint32_t pixel_grb)
+{
     pio_sm_put_blocking(pio0, 0, pixel_grb << 8u);
 }
 
-static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b) {
-    return  ((uint32_t) (r) << 8)  |
-            ((uint32_t) (g) << 16) |
-            (uint32_t) (b);
+static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b)
+{
+    return ((uint32_t)(r) << 8) |
+           ((uint32_t)(g) << 16) |
+           (uint32_t)(b);
 }
 
-void change_led_color(int your_lives) {
-    switch(your_lives) {
-        case 0:
-            put_pixel(urgb_u32(0xFF, 0x00, 0x00)); // Set the RGB LED color to red
-            break;
-        case 1:
-            put_pixel(urgb_u32(0xFF, 0xA5, 0x00)); // Set the RGB LED color to orange
-            break;
-        case 2:
-            put_pixel(urgb_u32(0x00, 0x00, 0xFF)); // Set the RGB LED color to blue
-            break;
-        case 3:
-            put_pixel(urgb_u32(0x00, 0xFF, 0x00)); // Set the RGB LED color to green
-            break;
-        default:
-           
-            break;
+void change_led_color(int your_lives)
+{
+    switch (your_lives)
+    {
+    case 0:
+        put_pixel(urgb_u32(0xFF, 0x00, 0x00)); // Set the RGB LED color to red
+        break;
+    case 1:
+        put_pixel(urgb_u32(0xFF, 0xA5, 0x00)); // Set the RGB LED color to orange
+        break;
+    case 2:
+        put_pixel(urgb_u32(0x00, 0x00, 0xFF)); // Set the RGB LED color to blue
+        break;
+    case 3:
+        put_pixel(urgb_u32(0x00, 0xFF, 0x00)); // Set the RGB LED color to green
+        break;
+    default:
+
+        break;
     }
 }
 
 // Read the input morse code
 void addMorse(unsigned int input)
 {
-    if(input != 0){
-        add_morse_code(input, sequence);
+    if (input != 0)
+    {
+        add_morse_code(input);
     }
-    else{
+    else
+    {
         // TODO: start the game
-        if(level == 0){
-            if (check_morse_code(sequence, answer_word[19])){
+        if (level == 0)
+        {
+            if (check_morse_code(sequence, answer_word[19]))
+            {
                 level = 1;
             }
-            else if (check_morse_code(sequence, answer_word[20])){
+            else if (check_morse_code(sequence, answer_word[20]))
+            {
                 level = 2;
             }
             // else if (check_morse_code(sequence, answer_word[21])){
@@ -148,99 +152,117 @@ void addMorse(unsigned int input)
             // else if (check_morse_code(sequence, answer_word[22])){
             //     level = 4;
             // }
-            else{
+            else
+            {
                 printf("Invalid input!\n");
                 printf("Please try again!\n");
-                printf("The sequence was: %s \n" ,sequence_to_string(sequence));
-                printf("The translated input was: %s \n", sequence_to_letters((char*)sequence_to_string(sequence)));
-    
+                printf("The sequence was: %s \n", sequence_to_string());
+                printf("The translated input was: %s \n", sequence_to_letters(sequence_to_string()));
+
                 sequence = seq_empty;
+                seqLen = 0;
                 return;
             }
 
             sequence = seq_empty;
+            seqLen = 0;
             print_level();
         }
-        else{
-            printf("The sequence was: %s\n", sequence_to_string(sequence));
+        else
+        {
+            printf("The sequence was: %s\n", sequence_to_string());
             // printf("The translated input was: %s\n", sequence_to_string(answer));
-            if(check_morse_code(sequence, answer)){
+            if (check_morse_code(sequence, answer))
+            {
                 printf("Correct!\n");
                 wins++;
-                if(lives < 3){
+                if (lives < 3)
+                {
                     lives++;
                 }
                 correct_answers++;
                 change_led_color(lives);
             }
-            else{
+            else
+            {
                 printf("Incorrect!\n");
-                printf("The sequence was: %s\n", sequence_to_string(sequence));
+                printf("The sequence was: %s\n", sequence_to_string());
                 printf("The translated input was: %s\n", sequence_to_letters(sequence_to_string(sequence)));
                 lives--;
                 incorrect_answers++;
                 change_led_color(lives);
             }
-            if (level == 2 || level == 4){
+            if (level == 2 || level == 4)
+            {
                 printf("The Answer is: %s", answer);
             }
-            if(lives == 0){
+            if (lives == 0)
+            {
                 printf("Game Over!\n");
                 change_led_color(lives);
                 end_the_game();
                 return;
             }
-            if(wins == 5){
+            if (wins == 5)
+            {
                 printf("Next Level!\n");
                 level++;
-                if(level > 4){
+                if (level > 4)
+                {
                     printf("You have reached the end! Congratulations!\n");
                     end_the_game();
                     return;
                 }
                 wins = 0;
             }
-            int seq_empty[0];
             sequence = seq_empty;
+            seqLen = 0;
             print_level();
-        }   
-    }   
+        }
+    }
 }
 
-
-
 // print the level
-void print_level(){
-    if(level == 0){
+void print_level()
+{
+    generate_answer();
+    if (level == 1)
+    {   
         printf("Current diffuculty: 1.Easy\n");
         printf("The task is: %s\n", answer_name);
         printf("The required input is: %s\n", answer);
     }
-    else if(level == 1){
+    else if (level == 2)
+    {
         printf("Current diffuculty: 2.Medium\n");
         printf("The task is: %s\n", answer_name);
     }
-    else if(level == 2){
+    else if (level == 3)
+    {
         printf("Current diffuculty: 3.Hard\n");
         printf("The task is: %s\n", answer_name);
         printf("The required input is: %s\n", answer);
     }
-    else if(level == 3){
+    else if (level == 4)
+    {
         printf("Current diffuculty: 4.Impossible\n");
         printf("The task is: %s\n", answer_name);
     }
 }
 
 // Generate random answer
-void generate_answer(){
+void generate_answer()
+{
     time_t t;
-    srand((unsigned) time(&t));
-    if(level == 1 || level == 2){
+    srand((unsigned)time(&t));
+    if (level == 1 || level == 2)
+    {
         int random = rand() % 26;
         answer = answers[random];
         answer_name = answer_names[random];
     }
-    else if(level == 3 || level == 4){
+    else if (level == 3 || level == 4)
+    {
         int random = rand() % 28;
         answer = answer_word[random];
         answer_name = answer_word_names[random];
@@ -248,7 +270,8 @@ void generate_answer(){
 }
 
 // initialise answers[] and answer_names[] from the file answers.h
-void initialise_answers(){
+void initialise_answers()
+{
     answers[0] = A;
     answers[1] = B;
     answers[2] = C;
@@ -302,35 +325,34 @@ void initialise_answers(){
     answer_names[24] = "Y";
     answer_names[25] = "Z";
 
-
-    answer_word[0] =TO ;
-    answer_word[1] =ME ;
-    answer_word[2] =MOM ;
-    answer_word[3] =NOW ;
-    answer_word[4] =DOT ;
-    answer_word[5] =DOG ;
-    answer_word[6] =CAT ;
-    answer_word[7] =DAD;
-    answer_word[8] =TOM ;
-    answer_word[9] =WILSON ;
-    answer_word[10] =DIMA ;
-    answer_word[11] =KOSTYA ;
-    answer_word[12] =FISH ;
-    answer_word[13] =PICO ;
-    answer_word[14] =ALARM ;
-    answer_word[15] =IRELAND ;
-    answer_word[16] =TRINITY ;
-    answer_word[17] =COLLEGE ;
-    answer_word[18] =ZERO ;
-    answer_word[19] =ONE ;
-    answer_word[20] =TWO ;
-    answer_word[21] =THREE ;
-    answer_word[22] =FOUR ;
-    answer_word[23] =FIVE ;
-    answer_word[24] =SIX ;
-    answer_word[25] =SEVEN ;
-    answer_word[26] =EIGHT ;
-    answer_word[27] =NINE ;
+    answer_word[0] = TO;
+    answer_word[1] = ME;
+    answer_word[2] = MOM;
+    answer_word[3] = NOW;
+    answer_word[4] = DOT;
+    answer_word[5] = DOG;
+    answer_word[6] = CAT;
+    answer_word[7] = DAD;
+    answer_word[8] = TOM;
+    answer_word[9] = WILSON;
+    answer_word[10] = DIMA;
+    answer_word[11] = KOSTYA;
+    answer_word[12] = FISH;
+    answer_word[13] = PICO;
+    answer_word[14] = ALARM;
+    answer_word[15] = IRELAND;
+    answer_word[16] = TRINITY;
+    answer_word[17] = COLLEGE;
+    answer_word[18] = ZERO;
+    answer_word[19] = ONE;
+    answer_word[20] = TWO;
+    answer_word[21] = THREE;
+    answer_word[22] = FOUR;
+    answer_word[23] = FIVE;
+    answer_word[24] = SIX;
+    answer_word[25] = SEVEN;
+    answer_word[26] = EIGHT;
+    answer_word[27] = NINE;
     answer_word_names[0] = "TO";
     answer_word_names[1] = "ME";
     answer_word_names[2] = "MOM";
@@ -361,25 +383,33 @@ void initialise_answers(){
     answer_word_names[27] = "NINE";
 }
 // End the game and print the stats
-void end_the_game(){
+void end_the_game()
+{
     printf("Number of correct answers: %d\n", correct_answers);
     printf("Number of incorrect answers: %d\n", incorrect_answers);
     printf("Number of lives left: %d\n", lives);
     printf("Accuracy: %d\n", (correct_answers / (correct_answers + incorrect_answers)) * 100);
 }
 
-char sequence_to_letters(char* seq){
+char sequence_to_letters(char *seq)
+{
 
-     int num_letters = 26;
-     char output;
-    for (int l = 0; seq[l] != '\0'; l++) {
+    size_t seqLeng = strlen(seq);
+    int i = (int)seqLeng - 1;
+    int num_letters = 26;
+    char output;
+    for (int l = 0; l < i; l++)
+    {
         char temp[5] = "";
         int k = 0;
-        while (seq[l] != ' ' && seq[l] != '\0') {
+        while (seq[l] != ' ' && seq[l] != '\0')
+        {
             temp[k++] = seq[l++];
         }
-        for (int j = 0; j < num_letters; j++) {
-            if (strcmp(temp, answers[j]) == 0) {
+        for (int j = 0; j < num_letters; j++)
+        {
+            if (strcmp(temp, answers[j]) == 0)
+            {
                 output += *answer_names[j];
                 break;
             }
@@ -388,104 +418,87 @@ char sequence_to_letters(char* seq){
     return output;
 }
 
-
 // Add the input morse code to the sequence
-void add_morse_code(int code, int seq[])
+void add_morse_code(int code)
 {
-    if(sequence[0] == -1){
+    if (sequence[0] == -1)
+    {
         int output[1];
         output[0] = code;
         sequence = output;
+        seqLen = 1;
         return;
     }
-    else{
-        char *temp = sequence_to_string(seq);
-        int seqLen = 0;
-        int i = 0;
-        while (temp[i] != '\0')
-        {
-            seqLen++;
-            i++;
-        }
-
-        //int length = sizeof(seq) / sizeof(seq[0]); 
+    else
+    {
         int output[seqLen + 1];
         for (int i = 0; i < seqLen; i++)
         {
-            output[i] = seq[i];
+            output[i] = sequence[i];
         }
         output[seqLen] = code;
         sequence = output;
+        seqLen++;
         return;
     }
 }
 
-
 // Check if the sequence morse code is correct
-bool check_morse_code(int seq[], char * answer){
+bool check_morse_code(int seq[], char *answer)
+{
 
-    char* temp = sequence_to_string(seq);
-    //int seqLen = strlen(temp);
-    // size_t sequenceLength = sizeof(seq) / sizeof(seq[0]);
-    // int answerLength = sizeof(answer) / sizeof(answer[0]);
-    int seqLen = 0;
-    int i = 0;
-    while (temp[i] != '\0'){
-        seqLen++;
-        i++;
-    }
     int answerLength = strlen(answer);
-    if (seqLen != answerLength){
+    if (seqLen != answerLength)
+    {
         return false;
     }
-    for (int i = 0; i < seqLen; i++){
-        if (seq[i] != answer[i]){
+    for (int i = 0; i < seqLen; i++)
+    {
+        if (seq[i] != answer[i])
+        {
             return false;
         }
     }
-    return true;    
+    return true;
 }
 
-
 // Convert the morse code to a character
-char instance_to_char(int instance){
-    if (instance == 0)
+char instance_to_char(int instance)
+{
+    if (instance == 46)
     {
         return '.';
     }
-    else if(instance == 1)
+    else if (instance == 45)
     {
         return '-';
     }
-    else if(instance == 2){
+    else if (instance == 32)
+    {
         return ' ';
     }
-    else{
+    else
+    {
         return '\0';
     }
 }
 
-
 // Conver whole sequence to a string
-char* sequence_to_string(int seq[]){
-    char* output;
-    int i = 0;
-    while (seq[i] != '\0'){
-    output += instance_to_char(seq[i]);
-    i++;
+char *sequence_to_string()
+{
+    char *output;
+    for (int i = 0; i < seqLen; i++)
+    {
+        output[i] = instance_to_char(sequence[i]);
     }
-    
-    return  output;
+    return output;
 }
-
-
-
 
 // Main entry point of the application
 int main()
 {
-    initialise_answers();         // Initialise the answers
-    stdio_init_all();             // Initialise all basic IO
+    initialise_answers(); // Initialise the answers
+    stdio_init_all();     // Initialise all basic IO
     watchdog_init();
     printf("......Morse Code game start......\n"); // Basic print to console
 
@@ -496,8 +509,8 @@ int main()
     printf(":                                   Welcome to the                                      :\n");
     printf(":                                   Morse Code Game                                     :\n");
     printf("+---------------------------------------------------------------------------------------+\n");
-    printf("The rules:\n"); 
-    printf("Use GP21 button in order to enter Morse code sequence when asked\n"); 
+    printf("The rules:\n");
+    printf("Use GP21 button in order to enter Morse code sequence when asked\n");
     printf("If you get it correct you gain a life, if not - you lose one.\n");
     printf("LED is the indicator of lives' amount. Max lives - 3; when 0 is left - game over\n");
     printf("4 difficulty levels: \n");
@@ -510,10 +523,10 @@ int main()
     printf("You can choose the difficulty level by entering the sequence for the level number:\n");
     printf("1. Easy (hint: %s)\n", answer_word[19]);
     printf("2. Medium (hint: %s)\n", answer_word[20]);
-    //printf("Enter the sequence for the level difficutly number\n");
-    // printf("3. Hard\n");
-    // printf("4. Impossible\n");
+    // printf("Enter the sequence for the level difficutly number\n");
+    //  printf("3. Hard\n");
+    //  printf("4. Impossible\n");
     watchdog_update();
-    main_asm();                   // Jump into the ASM code
-    return 0;                     // Application return code
+    main_asm(); // Jump into the ASM code
+    return 0;   // Application return code
 }

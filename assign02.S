@@ -17,11 +17,12 @@
 .equ GPIO_DIR_IN, 0 @ Specify input direction for a GPIO pin
 .equ GPIO_DIR_OUT, 1 @ Specify output direction for a GPIO pin
 .equ GPIO_ISR_OFFSET, 0x74 @ GPIO is int #13 (vector table entry 29)
-.equ ONE_SECOND, 500000     
-.equ TWO_SECONDS, 1000000 
+.equ ONE_SECOND, 500000  
+.equ ONEHALF_SECOND,1500000   
+.equ TWO_SECONDS, 2000000 
 
 .equ ALRM_ISR_OFFSET, 0x40      
-.equ DFLT_ALARM_TIME, 2000000   
+.equ DFLT_ALARM_TIME, 3000000   
 
 .equ MORSE_MEMORY, 0x10000010   //Address where the morse string will be stored
 
@@ -60,6 +61,14 @@ main_asm:
     ldr     r2,=(PPB_BASE+M0PLUS_NVIC_ISER_OFFSET)
     str     r0,[r2]                       
     
+
+wait_button:
+    cmp     r6,#1
+    beq     button_pressed
+    b       wait_button
+    
+button_pressed:
+
     ldr     r2,=(TIMER_BASE+TIMER_INTE_OFFSET)
     ldr     r0,=1
     str     r0,[r2]
@@ -72,13 +81,14 @@ main_asm:
     @finishing configuring all the interrupt here as well as nvic
     ldr     r7,=-1
 
+    
 loop:
   wfi 
   b       loop                                       @ Infinite loop
 
 .thumb_func
 timer_isr:  
-   push     {r0-r5,lr}
+   push     {r0-r5,lr} 
    ldr      r0,=0
    bl       addMorse      @add the terminate character means it has been two seconds
    ldr      r7,=-1    @reset for first release
@@ -96,6 +106,7 @@ timer_isr:
 .thumb_func
 gpio_isr:
      push     {r0-r5,lr}
+     ldr      r6,=1
      bl       watchdog_update@update the watchdog to reset timer
      ldr      r0,=(IO_BANK0_BASE+IO_BANK0_PROC0_INTS2_OFFSET)
      ldr      r0,[r0]    @get the status of the gpio intrrupt
@@ -119,10 +130,11 @@ gpio_isr:
      beq      not_space
      ldr      r7,=interval
      ldr      r7,[r7]
-     ldr      r3,=ONE_SECOND
+     ldr      r3,=ONEHALF_SECOND
      cmp      r7,r3         @compare the interval between the button released until the next time button pressed
      bgt      space_input
 not_space:
+     ldr      r7,=0
      ldr      r3,=ONE_SECOND
      cmp      r0,r3
      bgt      add_dash        @if it's not longer than one second, add a dash
@@ -171,6 +183,7 @@ button_press:
      subs     r1,r1,r2   @the time between the last time button released and next time button pressed
      ldr      r2,=interval
      str      r1,[r2]
+     movs     r0,r1
      ldr      r0,=GPIO_BTN_FALL_MSK
      ldr      r1,=(IO_BANK0_BASE+IO_BANK0_INTR2_OFFSET)
      str      r0,[r1]      

@@ -24,7 +24,7 @@
 .equ ALRM_ISR_OFFSET, 0x40      
 .equ DFLT_ALARM_TIME, 3000000   
 
-
+.equ MORSE_MEMORY, 0x10000010   //Address where the morse string will be stored
 
 
 @ Entry point to the ASM portion of the program
@@ -165,7 +165,7 @@ space_input:
 end_write:
      ldr      r1,=(TIMER_BASE+TIMER_TIMELR_OFFSET)
      ldr      r0,[r1]
-     ldr      r1,=end_time
+     ldr      r1,=end_time  @record the button released time
      str      r0,[r1]
      ldr      r0,=GPIO_BTN_RISE_MSK
      ldr      r1,=(IO_BANK0_BASE+IO_BANK0_INTR2_OFFSET)
@@ -184,7 +184,7 @@ button_press:
      ldr      r2,=interval @R2 is the interval time between the last time button pressed and the next time button pressed
      str      r1,[r2]    @store the interval time to the shared memory
      movs     r0,r1
-     ldr      r0,=GPIO_BTN_FALL_MSK@r0 is the mask for clear pending bits for rise event
+     ldr      r0,=GPIO_BTN_FALL_MSK@r0 is the mask for clear pending bits for fall event
      ldr      r1,=(IO_BANK0_BASE+IO_BANK0_INTR2_OFFSET)
      str      r0,[r1]      
 end_all:

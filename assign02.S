@@ -63,6 +63,7 @@ main_asm:
     str     r0,[r2]                       
     
 
+
 wait_button:
     cmp     r6,#1
     beq     button_pressed

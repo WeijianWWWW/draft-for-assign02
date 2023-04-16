@@ -10,9 +10,9 @@
 #include "answers.h"
 
 // The global variables used in the code
-int seq_empty[1] = {-1}; // empty sequence
+char seq_empty[1] = {'1'}; // empty sequence
 
-int *sequence = seq_empty; // pointer to the sequence
+char *sequence = seq_empty; // pointer to the sequence
 
 char *answer;
 char *answer_name;
@@ -34,15 +34,15 @@ int seqLen = 0;
 
 // Declare the main assembly code entry point.
 void main_asm();
-bool check_morse_code(int seq[], char *answer);
+bool check_morse_code(char seq[], char *answer);
 char *sequence_to_string();
-void addMorse(unsigned int input);
+void addMorse(char input);
 void change_led_color(int your_lives);
 void print_level();
 void generate_answer();
 void initialise_answers();
 void end_the_game();
-void add_morse_code(int code);
+void add_morse_code(char code);
 char instance_to_char(int instance);
 
 char sequence_to_letters(char *seq);
@@ -127,9 +127,9 @@ void change_led_color(int your_lives)
 }
 
 // Read the input morse code
-void addMorse(unsigned int input)
+void addMorse(char input)
 {
-    if (input != 0)
+    if (input != '\0')
     {
         add_morse_code(input);
     }
@@ -156,9 +156,12 @@ void addMorse(unsigned int input)
             {
                 printf("Invalid input!\n");
                 printf("Please try again!\n");
-                printf("The sequence was: %s \n", sequence_to_string());
+                printf("The sequence was: ");
+                for(int i = 0; i < seqLen; i++){
+                    printf("%c \n", sequence[i]);
+                }
+                printf("\n");
                 printf("The translated input was: %s \n", sequence_to_letters(sequence_to_string()));
-
                 sequence = seq_empty;
                 seqLen = 0;
                 return;
@@ -186,15 +189,14 @@ void addMorse(unsigned int input)
             else
             {
                 printf("Incorrect!\n");
-                printf("The sequence was: %s\n", sequence_to_string());
-                printf("The translated input was: %s\n", sequence_to_letters(sequence_to_string(sequence)));
+                printf("The translated input was: %s\n", sequence_to_letters(sequence_to_string()));
                 lives--;
                 incorrect_answers++;
                 change_led_color(lives);
             }
             if (level == 2 || level == 4)
             {
-                printf("The Answer is: %s", answer);
+                printf("The Answer sequence is: %s", answer);
             }
             if (lives == 0)
             {
@@ -419,11 +421,11 @@ char sequence_to_letters(char *seq)
 }
 
 // Add the input morse code to the sequence
-void add_morse_code(int code)
+void add_morse_code(char code)
 {
-    if (sequence[0] == -1)
+    if (sequence[0] == '1')
     {
-        int output[1];
+        char output[1];
         output[0] = code;
         sequence = output;
         seqLen = 1;
@@ -431,7 +433,7 @@ void add_morse_code(int code)
     }
     else
     {
-        int output[seqLen + 1];
+        char output[seqLen + 1];
         for (int i = 0; i < seqLen; i++)
         {
             output[i] = sequence[i];
@@ -444,7 +446,7 @@ void add_morse_code(int code)
 }
 
 // Check if the sequence morse code is correct
-bool check_morse_code(int seq[], char *answer)
+bool check_morse_code(char seq[], char *answer)
 {
 
     int answerLength = strlen(answer);
@@ -483,15 +485,16 @@ char instance_to_char(int instance)
     }
 }
 
-// Conver whole sequence to a string
+// Convert whole sequence to a string
 char *sequence_to_string()
 {
-    char *output;
+    char *output = malloc(seqLen + 1);
     for (int i = 0; i < seqLen; i++)
     {
         output[i] = instance_to_char(sequence[i]);
     }
-    return output;
+    output[seqLen] = '\0';
+    return output;    
 }
 
 // Main entry point of the application

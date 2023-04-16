@@ -150,17 +150,17 @@ void addMorse(char input)
             {
                 level = 2;
             }
-            // else if (check_morse_code(sequence, answer_word[21])){
-            //     level = 3;
-            // }
-            // else if (check_morse_code(sequence, answer_word[22])){
-            //     level = 4;
-            // }
+            else if (check_morse_code(answer_word[21])){
+                level = 3;
+            }
+            else if (check_morse_code(answer_word[22])){
+                level = 4;
+            }
             else
             {
                 printf("\nInvalid input!\n");
                 printf("Please try again!\n");
-                // printf("The translated input was: %s \n", sequence_to_letters());
+                printf("The translated input was: %s \n", sequence_to_letters());
                 newSequence();
                 return;
             }
@@ -186,14 +186,14 @@ void addMorse(char input)
             else
             {
                 printf("Incorrect!\n");
-                // printf("The translated input was: %s\n", sequence_to_letters());
+                printf("The translated input was: %s\n", sequence_to_letters());
                 lives--;
                 incorrect_answers++;
                 change_led_color(lives);
             }
             if (level == 2 || level == 4)
             {
-                printf("The Answer sequence is: %s\n", answer);
+                printf("The Answer sequence was: %s\n", answer);
             }
             if (lives == 0)
             {
@@ -404,16 +404,17 @@ void end_the_game()
     printf("Number of correct answers: %d\n", correct_answers);
     printf("Number of incorrect answers: %d\n", incorrect_answers);
     printf("Number of lives left: %d\n", lives);
-    printf("Accuracy: %d\n", (correct_answers / (correct_answers + incorrect_answers)) * 100);
+    printf("Accuracy: %f\n", (correct_answers / (correct_answers + incorrect_answers)) * 100);
 }
 
+// translate the sequence of dots and dashes to letters and words
 char *sequence_to_letters()
 {
     int i = 0;
     int j = 0;
     int k = 0;
     int k_prev = 0;
-    char *letters = malloc(seqLen + 1);
+    char *letters = calloc(seqLen, sizeof(char));
     char *output = calloc(seqLen, sizeof(char));
     while(i < seqLen){
         if(sequence[i] != ' '){
@@ -425,7 +426,7 @@ char *sequence_to_letters()
             {
                 if (strcmp(output, answers[z]) == 0)
                 {
-                    // letters[k] = answer_names[z];
+                    letters[k] = *answer_names[z];
                     k++;
                     break;
                 }
@@ -435,7 +436,8 @@ char *sequence_to_letters()
             }
             k_prev = k;
             j = 0;
-            output = malloc(seqLen * sizeof(char));
+            free(output);
+            output = calloc(seqLen, sizeof(char));
         }
         i++;
     }
@@ -560,9 +562,9 @@ int main()
     printf("You can choose the difficulty level by entering the sequence for the level number:\n");
     printf("1. Easy (hint: %s)\n", answer_word[19]);
     printf("2. Medium (hint: %s)\n", answer_word[20]);
+    printf("3. Hard (hint: %s)\n", answer_word[21]);
+    printf("4. Impossible (hint: %s)\n", answer_word[22]);
     // printf("Enter the sequence for the level difficutly number\n");
-    //  printf("3. Hard\n");
-    //  printf("4. Impossible\n");
     watchdog_update();
     main_asm(); // Jump into the ASM code
     return 0;   // Application return code

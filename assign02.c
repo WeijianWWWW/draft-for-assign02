@@ -9,15 +9,10 @@
 #include "hardware/watchdog.h"
 #include "answers.h"
 
-#define IS_RGBW true        // Will use RGBW format
-#define NUM_PIXELS 1        // There is 1 WS2812 device in the chain
-#define WS2812_PIN 28       // The GPIO pin that the WS2812 connected to
-
-
 // The global variables used in the code
 char seq_empty[1] = {'1'}; // empty sequence
 
-char *sequence = seq_empty; // pointer to the sequence
+char *sequence; // pointer to the sequence
 
 char *answer;
 char *answer_name;
@@ -39,19 +34,19 @@ int seqLen = 0;
 
 // Declare the main assembly code entry point.
 void main_asm();
-bool check_morse_code(char seq[], char *answer);
+bool check_morse_code(char *seq, char *answer);
 char *sequence_to_string();
 void addMorse(char input);
-void change_led_color(int lives);
+void change_led_color(int your_lives);
 void print_level();
 void generate_answer();
 void initialise_answers();
 void end_the_game();
 void add_morse_code(char code);
 char instance_to_char(int instance);
-
+void newSequence();
 char sequence_to_letters(char *seq);
-
+void reserve_space();
 // Initialise a GPIO pin – see SDK for detail on gpio_init()
 void asm_gpio_init(uint pin)
 {
@@ -109,9 +104,9 @@ static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b)
            (uint32_t)(b);
 }
 
-void change_led_color(int lives)
+void change_led_color(int your_lives)
 {
-    switch (lives)
+    switch (your_lives)
     {
     case 0:
         put_pixel(urgb_u32(0xFF, 0x00, 0x00)); // Set the RGB LED color to red
@@ -163,17 +158,15 @@ void addMorse(char input)
                 printf("Please try again!\n");
                 printf("The sequence was: ");
                 for(int i = 0; i < seqLen; i++){
-                    printf("%c \n", sequence[i]);
+                    printf("%s \n", sequence[i]);
                 }
                 printf("\n");
                 printf("The translated input was: %s \n", sequence_to_letters(sequence_to_string()));
-                sequence = seq_empty;
-                seqLen = 0;
+                newSequence();
                 return;
             }
 
-            sequence = seq_empty;
-            seqLen = 0;
+            newSequence();
             print_level();
         }
         else
@@ -222,13 +215,22 @@ void addMorse(char input)
                 }
                 wins = 0;
             }
-            sequence = seq_empty;
-            seqLen = 0;
+            newSequence();
             print_level();
         }
     }
 }
 
+// new empty sequence and reset the length
+void newSequence()
+{
+    free(sequence);
+    // for(int i = 0; i < seqLen; i++){
+    //     sequence[i] = '\0';
+    // }
+    seqLen = 0;
+
+}
 // print the level
 void print_level()
 {
@@ -276,9 +278,22 @@ void generate_answer()
     }
 }
 
+// reserve more space for the sequence
+void reserve_space()
+{
+    char *new_sequence = calloc((seqLen + 1), sizeof(char));
+    for (int i = 0; i < seqLen; i++)
+    {
+        new_sequence[i] = sequence[i];
+    }
+    free(sequence);
+    sequence = new_sequence;
+}
+
 // initialise answers[] and answer_names[] from the file answers.h
 void initialise_answers()
 {
+    sequence = calloc(1, sizeof(char));
     answers[0] = A;
     answers[1] = B;
     answers[2] = C;
@@ -428,30 +443,34 @@ char sequence_to_letters(char *seq)
 // Add the input morse code to the sequence
 void add_morse_code(char code)
 {
-    if (sequence[0] == '1')
-    {
-        char output[1];
-        output[0] = code;
-        sequence = output;
-        seqLen = 1;
-        return;
-    }
-    else
-    {
-        char output[seqLen + 1];
-        for (int i = 0; i < seqLen; i++)
-        {
-            output[i] = sequence[i];
-        }
-        output[seqLen] = code;
-        sequence = output;
-        seqLen++;
-        return;
-    }
+    sequence[seqLen] = code;
+    reserve_space();
+    seqLen++;
+    printf("%c", code);
+    // if (sequence[0] == '1')
+    // {
+    //     char output[1];
+    //     output[0] = code;
+    //     sequence = output;
+    //     seqLen = 1;
+    //     return;
+    // }
+    // else
+    // {
+    //     char output[seqLen + 1];
+    //     for (int i = 0; i < seqLen; i++)
+    //     {
+    //         output[i] = sequence[i];
+    //     }
+    //     output[seqLen] = code;
+    //     sequence = output;
+    //     seqLen++;
+    //     return;
+    // }
 }
 
 // Check if the sequence morse code is correct
-bool check_morse_code(char seq[], char *answer)
+bool check_morse_code(char *seq, char *answer)
 {
 
     int answerLength = strlen(answer);
@@ -507,11 +526,7 @@ int main()
 {
     initialise_answers(); // Initialise the answers
     stdio_init_all();     // Initialise all basic IO
-    PIO pio = pio0;
-    uint offset = pio_add_program(pio, &ws2812_program);
-    ws2812_program_init(pio, 0, offset, WS2812_PIN, 800000, IS_RGBW);
     watchdog_init();
-    put_pixel(urgb_u32(0x00, 0xFF, 0x00));
     printf("......Morse Code game start......\n"); // Basic print to console
 
     printf("+---------------------------------------------------------------------------------------+\n");

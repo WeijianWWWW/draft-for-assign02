@@ -27,7 +27,6 @@
 .equ MORSE_MEMORY, 0x10000010   //Address where the morse string will be stored
 
 
-
 @ Entry point to the ASM portion of the program
 main_asm:
     movs    r0, #GPIO_BTN                // This value is the GPIO DOWN BTN on the PI PICO board
@@ -67,7 +66,7 @@ wait_button:
     cmp     r6,#1
     beq     button_pressed
     b       wait_button
-    
+
 button_pressed:
 
     ldr     r2,=(TIMER_BASE+TIMER_INTE_OFFSET)
@@ -182,10 +181,10 @@ button_press:
      ldr      r2,=end_time
      ldr      r2,[r2]    @read the last button released time
      subs     r1,r1,r2   @the time between the last time button released and next time button pressed
-     ldr      r2,=interval
-     str      r1,[r2]
+     ldr      r2,=interval @R2 is the interval time between the last time button pressed and the next time button pressed
+     str      r1,[r2]    @store the interval time to the shared memory
      movs     r0,r1
-     ldr      r0,=GPIO_BTN_FALL_MSK
+     ldr      r0,=GPIO_BTN_FALL_MSK@r0 is the mask for clear pending bits for rise event
      ldr      r1,=(IO_BANK0_BASE+IO_BANK0_INTR2_OFFSET)
      str      r0,[r1]      
 end_all:
